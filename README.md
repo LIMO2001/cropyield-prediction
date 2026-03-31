@@ -113,3 +113,5 @@ It helps to:
 
 [git clone https://github.com/yourusername/maize-yield-prediction.git](https://github.com/LIMO2001/cropyield-prediction.git)
 <img width="955" height="499" alt="image" src="https://github.com/user-attachments/assets/12add991-cce4-49f5-9862-da492fe029b3" />
+<img width="1887" height="951" alt="Screenshot 2026-03-31 112849" src="https://github.com/user-attachments/assets/163ba83c-fda8-4d77-a24e-24b9073ea808" />
+
