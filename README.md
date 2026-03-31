@@ -112,6 +112,12 @@ It helps to:
 1. Clone the repository:
 
 [git clone https://github.com/yourusername/maize-yield-prediction.git](https://github.com/LIMO2001/cropyield-prediction.git)
+<img width="1903" height="1014" alt="Screenshot 2026-03-31 140342" src="https://github.com/user-attachments/assets/1aa8743f-5d07-43ac-9387-d87e37db183c" />
+
 <img width="955" height="499" alt="image" src="https://github.com/user-attachments/assets/12add991-cce4-49f5-9862-da492fe029b3" />
 <img width="1887" height="951" alt="Screenshot 2026-03-31 112849" src="https://github.com/user-attachments/assets/163ba83c-fda8-4d77-a24e-24b9073ea808" />
+<img width="1903" height="1014" alt="Screenshot 2026-03-31 140342" src="https://github.com/user-attachments/assets/3d3959fb-be9e-4434-94d6-1139657b1ecb" />
+<img width="1919" height="1009" alt="Screenshot 2026-03-31 140611" src="https://github.com/user-attachments/assets/9b969016-9e61-4acf-9142-478969e2d30c" />
+
+
 
