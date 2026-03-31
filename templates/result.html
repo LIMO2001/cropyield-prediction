@@ -1,0 +1,291 @@
+{% extends 'master.html' %}
+{% block content %}
+
+<!-- Results Section Start -->
+<div class="container-fluid py-5 bg-light">
+    <div class="container py-5">
+        <!-- Breadcrumb Navigation -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/" class="text-primary">Home</a></li>
+                <li class="breadcrumb-item"><a href="/predict" class="text-primary">Predict</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Results</li>
+            </ol>
+        </nav>
+
+        <!-- Main Result Card -->
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Success Alert -->
+                <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <strong>Prediction Complete!</strong> Your maize yield forecast has been generated successfully.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
+                <!-- Main Result Card -->
+                <div class="card shadow-lg border-0 rounded-4 overflow-hidden mb-5">
+                    <div class="card-header text-white py-4 text-center" style="background: linear-gradient(135deg, #2c5e2e 0%, #1e3a2f 100%);">
+                        <i class="fas fa-chart-line fa-3x mb-2"></i>
+                        <h2 class="mb-0">Maize Yield Prediction Results</h2>
+                        <p class="mb-0 mt-2 opacity-75">AI-powered forecast based on your inputs</p>
+                    </div>
+                    <div class="card-body p-5">
+                        <!-- Yield Result -->
+                        <div class="text-center mb-5">
+                            <div class="position-relative d-inline-block">
+                                <div class="bg-success bg-opacity-10 rounded-circle p-5">
+                                    <i class="fas fa-tractor fa-4x text-success mb-3"></i>
+                                </div>
+                            </div>
+                            <h3 class="text-muted mt-4">Expected Maize Yield</h3>
+                            <div class="display-1 fw-bold text-success my-3">
+                                {% if result[0] is number %}
+                                    {{ "%.2f"|format(result[0]) }}
+                                {% else %}
+                                    {{ result[0] }}
+                                {% endif %}
+                                <span class="fs-2 text-muted">kg/ha</span>
+                            </div>
+                            <p class="lead">Estimated harvest per hectare of land</p>
+                            
+                            <!-- Yield Rating Badge -->
+                            <div class="mt-3">
+                                {% if result[0] is number %}
+                                    {% if result[0] >= 5000 %}
+                                        <span class="badge bg-success fs-6 px-4 py-2">
+                                            <i class="fas fa-star me-1"></i> Excellent Yield
+                                        </span>
+                                    {% elif result[0] >= 3000 %}
+                                        <span class="badge bg-info fs-6 px-4 py-2">
+                                            <i class="fas fa-smile me-1"></i> Good Yield
+                                        </span>
+                                    {% elif result[0] >= 1500 %}
+                                        <span class="badge bg-warning fs-6 px-4 py-2">
+                                            <i class="fas fa-meh me-1"></i> Average Yield
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-danger fs-6 px-4 py-2">
+                                            <i class="fas fa-frown me-1"></i> Below Average
+                                        </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Comparison with National Average -->
+                        <div class="alert alert-info border-0 rounded-3 mb-4">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-chart-simple fa-2x me-3"></i>
+                                <div>
+                                    <h5 class="mb-1">Comparison with National Average</h5>
+                                    <p class="mb-0">National average maize yield is <strong>2,500 kg/ha</strong></p>
+                                    {% if result[0] is number %}
+                                        {% set diff = result[0] - 2500 %}
+                                        {% if diff > 0 %}
+                                            <p class="text-success mt-2 mb-0">
+                                                <i class="fas fa-arrow-up me-1"></i> 
+                                                Your predicted yield is {{ "%.1f"|format(diff/2500*100) }}% above national average!
+                                            </p>
+                                        {% elif diff < 0 %}
+                                            <p class="text-warning mt-2 mb-0">
+                                                <i class="fas fa-arrow-down me-1"></i> 
+                                                Your predicted yield is {{ "%.1f"|format((diff * -1)/2500*100) }}% below national average
+                                            </p>
+                                        {% else %}
+                                            <p class="text-info mt-2 mb-0">Your predicted yield matches the national average</p>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="row g-3 mt-4">
+                            <div class="col-md-6">
+                                <a href="/predict" class="btn btn-primary w-100 py-3" style="background: linear-gradient(135deg, #2c5e2e 0%, #1e3a2f 100%); border: none;">
+                                    <i class="fas fa-redo me-2"></i> Make Another Prediction
+                                </a>
+                            </div>
+                            <div class="col-md-6">
+                                <button onclick="window.print();" class="btn btn-outline-success w-100 py-3">
+                                    <i class="fas fa-print me-2"></i> Print Results
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recommendations Card -->
+                <div class="card shadow-sm border-0 rounded-4 mb-4">
+                    <div class="card-header bg-white border-0 pt-4 pb-0">
+                        <h4 class="text-primary mb-0">
+                            <i class="fas fa-lightbulb me-2"></i>Recommendations
+                        </h4>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row g-3">
+                            {% if result[0] is number %}
+                                {% if result[0] < 2500 %}
+                                    <div class="col-md-6">
+                                        <div class="d-flex">
+                                            <i class="fas fa-tint text-primary me-3 mt-1"></i>
+                                            <div>
+                                                <h6>Improve Soil Quality</h6>
+                                                <small class="text-muted">Consider adding organic matter and balanced fertilizers</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="d-flex">
+                                            <i class="fas fa-calendar-alt text-primary me-3 mt-1"></i>
+                                            <div>
+                                                <h6>Optimal Planting Time</h6>
+                                                <small class="text-muted">Plant at the beginning of rainy season for better yields</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% elif result[0] < 4000 %}
+                                    <div class="col-md-6">
+                                        <div class="d-flex">
+                                            <i class="fas fa-seedling text-primary me-3 mt-1"></i>
+                                            <div>
+                                                <h6>Consider High-Yield Varieties</h6>
+                                                <small class="text-muted">Hybrid seeds can boost your yield significantly</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="d-flex">
+                                            <i class="fas fa-chart-line text-primary me-3 mt-1"></i>
+                                            <div>
+                                                <h6>Optimize Fertilizer Application</h6>
+                                                <small class="text-muted">Balanced NPK ratio improves crop health</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <div class="col-md-6">
+                                        <div class="d-flex">
+                                            <i class="fas fa-trophy text-primary me-3 mt-1"></i>
+                                            <div>
+                                                <h6>Excellent Results!</h6>
+                                                <small class="text-muted">Maintain current farming practices</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="d-flex">
+                                            <i class="fas fa-share-alt text-primary me-3 mt-1"></i>
+                                            <div>
+                                                <h6>Share Your Success</h6>
+                                                <small class="text-muted">Help other farmers by sharing your methods</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Share Results -->
+                <div class="card shadow-sm border-0 rounded-4">
+                    <div class="card-body p-4 text-center">
+                        <h5 class="mb-3">Share Your Results</h5>
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="#" class="btn btn-outline-primary btn-sm" onclick="shareOnFacebook(); return false;">
+                                <i class="fab fa-facebook-f me-1"></i> Facebook
+                            </a>
+                            <a href="#" class="btn btn-outline-info btn-sm" onclick="shareOnTwitter(); return false;">
+                                <i class="fab fa-twitter me-1"></i> Twitter
+                            </a>
+                            <a href="#" class="btn btn-outline-success btn-sm" onclick="shareOnWhatsApp(); return false;">
+                                <i class="fab fa-whatsapp me-1"></i> WhatsApp
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-success.bg-opacity-10 {
+        background-color: rgba(44, 94, 46, 0.1) !important;
+    }
+    
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
+    }
+    
+    .display-1 {
+        font-size: 4rem;
+        font-weight: 700;
+    }
+    
+    @media (max-width: 768px) {
+        .display-1 {
+            font-size: 2.5rem;
+        }
+    }
+    
+    .badge {
+        font-weight: 500;
+    }
+    
+    .btn-outline-success:hover {
+        background-color: #2c5e2e;
+        color: white;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .card {
+        animation: fadeInUp 0.6s ease-out;
+    }
+</style>
+
+<script>
+function shareOnFacebook() {
+    var url = encodeURIComponent(window.location.href);
+    window.open('https://www.facebook.com/sharer/sharer.php?u=' + url, '_blank', 'width=600,height=400');
+}
+
+function shareOnTwitter() {
+    var url = encodeURIComponent(window.location.href);
+    var text = encodeURIComponent('Check out my maize yield prediction result! 🌽');
+    window.open('https://twitter.com/intent/tweet?text=' + text + '&url=' + url, '_blank', 'width=600,height=400');
+}
+
+function shareOnWhatsApp() {
+    var url = encodeURIComponent(window.location.href);
+    var text = encodeURIComponent('Check out my maize yield prediction result! 🌽');
+    window.open('https://wa.me/?text=' + text + '%20' + url, '_blank');
+}
+
+// Add animation on scroll
+document.addEventListener('DOMContentLoaded', function() {
+    var cards = document.querySelectorAll('.card');
+    for (var i = 0; i < cards.length; i++) {
+        cards[i].style.animationDelay = (i * 0.1) + 's';
+    }
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends 'master.html' %}
+{% block content %}
+
+<!-- Prediction Form Start -->
+<div class="container-fluid py-5 bg-light">
+    <div class="container py-5">
+        <div class="text-center mx-auto mb-5" style="max-width: 600px;">
+            <h1 class="display-5 fw-bold mb-3">Maize Yield Prediction</h1>
+            <p class="lead text-muted">Enter your farm parameters for AI-driven productivity forecast</p>
+        </div>
+        
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-lg border-0 rounded-4">
+                    <div class="card-header text-white py-4" style="background: linear-gradient(135deg, #2c5e2e 0%, #1e3a2f 100%);">
+                        <h3 class="mb-0 text-center">
+                            <i class="fas fa-chart-line me-2"></i>Farm Data Input
+                        </h3>
+                    </div>
+                    <div class="card-body p-5">
+                        <form action="/result" method="POST">
+                            <div class="row g-4">
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">
+                                        <i class="fas fa-map-marker-alt text-primary me-2"></i>Location
+                                    </label>
+                                    <select class="form-select form-select-lg border-2" name="town" required>
+                                        <option value="" disabled selected>Select your city/region</option>
+                                        {% for town in data %}
+                                            <option value="{{ town }}">{{ town }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">
+                                        <i class="fas fa-flask text-primary me-2"></i>Soil pH Level
+                                    </label>
+                                    <input type="number" step="0.1" class="form-control form-control-lg border-2" name="ph" placeholder="e.g., 6.5" required>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">
+                                        <i class="fas fa-tint text-primary me-2"></i>Soil Type
+                                    </label>
+                                    <select class="form-select form-select-lg border-2" name="soilType" required>
+                                        <option value="" disabled selected>Select soil type</option>
+                                        <option value="1">Clay Soil</option>
+                                        <option value="3">Loam Soil (Ideal)</option>
+                                        <option value="2">Sandy Soil</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">
+                                        <i class="fas fa-bug text-primary me-2"></i>Pest Prevalence Rate (%)
+                                    </label>
+                                    <input type="number" step="1" class="form-control form-control-lg border-2" name="pestPrevalence" placeholder="e.g., 15" required>
+                                </div>
+                                
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">
+                                        <i class="fas fa-seedling text-primary me-2"></i>Seed Variety
+                                    </label>
+                                    <select class="form-select form-select-lg border-2" name="seedVariety" required>
+                                        <option value="" disabled selected>Choose seed variety</option>
+                                        <option value="1">Hybrid-1 (High Yield)</option>
+                                        <option value="3">Hybrid-2 (Drought Resistant)</option>
+                                        <option value="2">Local-1 (Traditional)</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">
+                                        <i class="fas fa-chart-bar text-primary me-2"></i>NPK Ratio (N:P:K)
+                                    </label>
+                                    <input class="form-control form-control-lg border-2" name="NPK" placeholder="e.g., 10:5:5" required>
+                                    <small class="text-muted">Enter fertilizer ratio in format N:P:K</small>
+                                </div>
+                                
+                                <div class="col-12 mt-4">
+                                    <button type="submit" class="btn btn-primary btn-lg w-100 py-3" style="background: linear-gradient(135deg, #2c5e2e 0%, #1e3a2f 100%); border: none;">
+                                        <i class="fas fa-chart-simple me-2"></i>Predict Maize Yield
+                                        <i class="fas fa-arrow-right ms-2"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -70,6 +70,25 @@ def root():
     return render_template('index.html', data=regions)
 
 
+@app.route('/about')
+def about():
+    """About page route"""
+    return render_template('about.html')
+
+
+@app.route('/predict')
+def predict():
+    """Prediction form page route"""
+    regions = data.iloc[:, 0]
+    return render_template('predict.html', data=regions)
+
+
+@app.route('/contact')
+def contact():
+    """Contact page route"""
+    return render_template('contact.html')
+
+
 @app.route('/form', methods=['POST', 'GET'])
 def form():
     return request.form
@@ -84,19 +103,64 @@ def result():
         soil_ph = request.form['ph']
         pest_disease_prevalence = request.form['pestPrevalence']
         seed_variety = request.form['seedVariety']
-        N, P, K = NPK.split(":")
-        print(N, P, K)
+        
+        # Split NPK values
+        try:
+            N, P, K = NPK.split(":")
+            N = int(N)
+            P = int(P)
+            K = int(K)
+        except ValueError:
+            # If NPK format is incorrect, set default values
+            N, P, K = 10, 5, 5
+        
+        print(f"NPK Values - N: {N}, P: {P}, K: {K}")
+        
         temperature_val = get_temperature(city)
-        print(temperature_val)
+        print(f"Temperature: {temperature_val}")
+        
         rainfall_val = get_rainfall(city)
+        print(f"Rainfall: {rainfall_val}")
+        
+        # Check if values are valid
+        if temperature_val is None or rainfall_val is None:
+            return render_template("error.html", error="Could not retrieve weather data for the selected city")
+        
+        # Prepare data for prediction
         df = dataPrepare(rainfall_val, temperature_val, soil_type, soil_ph,
                          pest_disease_prevalence, seed_variety, N, P, K)
-        features = df.values.astype(int)
-        final_features = np.array([np.array(features)])
-        final_features = final_features.reshape(-1, 9)  # Adjust the number of columns accordingly
-        print(df)
-        result = model.predict(final_features)
-        return render_template("result.html",result=result)
+        
+        # Convert to numpy array for prediction
+        features = df.values.astype(float)
+        final_features = features.reshape(1, -1)  # Reshape for single prediction
+        
+        print(f"Features shape: {final_features.shape}")
+        print(f"Features: {final_features}")
+        
+        # Make prediction
+        try:
+            result = model.predict(final_features)
+            print(f"Prediction result: {result}")
+            return render_template("result.html", result=result)
+        except Exception as e:
+            print(f"Prediction error: {e}")
+            return render_template("error.html", error=f"Prediction failed: {str(e)}")
+    
+    # If GET request, redirect to prediction form
+    return render_template('predict.html', data=data.iloc[:, 0])
+
+
+# Error handlers
+@app.errorhandler(404)
+def page_not_found(e):
+    """Handle 404 errors"""
+    return render_template('404.html'), 404
+
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    """Handle 500 errors"""
+    return render_template('500.html'), 500
 
 
 if __name__ == '__main__':

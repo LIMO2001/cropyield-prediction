@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Amaizing - AI Maize Yield Predictor</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="AI maize yield prediction, smart farming, crop productivity" name="keywords">
+    <meta content="AI-powered platform for accurate maize yield predictions to help farmers optimize crop productivity" name="description">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../static/img/favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="../static/img/favicon.ico">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Roboto:wght@500;700;900&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="../static/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="../static/css/style.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #2c5e2e;
+            --secondary-color: #f4a261;
+            --dark-color: #1e3a2f;
+        }
+        
+        /* Navbar Styles */
+        .navbar {
+            background: linear-gradient(135deg, var(--dark-color) 0%, var(--primary-color) 100%);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .navbar-brand {
+            font-size: 2rem;
+            font-weight: 800;
+        }
+        
+        .navbar-brand .text-primary {
+            color: var(--secondary-color) !important;
+        }
+        
+        .navbar-brand .text-secondary {
+            color: #ff6b35 !important;
+        }
+        
+        .navbar-brand .text-danger {
+            color: #e76f51 !important;
+        }
+        
+        .nav-link {
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: var(--secondary-color) !important;
+        }
+        
+        .btn-predict {
+            background: linear-gradient(135deg, #ff6b35 0%, #f4a261 100%);
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-predict:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(244, 162, 97, 0.3);
+        }
+        
+        /* Simple Carousel Styles */
+        .simple-carousel {
+            margin-top: 76px;
+        }
+        
+        .carousel-item {
+            height: 500px;
+        }
+        
+        .carousel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .carousel-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+        }
+        
+        .carousel-caption {
+            bottom: 50%;
+            transform: translateY(50%);
+            z-index: 2;
+        }
+        
+        .carousel-caption h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .carousel-caption p {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .carousel-control-prev,
+        .carousel-control-next {
+            width: 8%;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .simple-carousel:hover .carousel-control-prev,
+        .simple-carousel:hover .carousel-control-next {
+            opacity: 1;
+        }
+        
+        .carousel-indicators button {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin: 0 5px;
+        }
+        
+        .carousel-indicators button.active {
+            background-color: var(--secondary-color);
+        }
+        
+        /* Chatbot Styles */
+        .chatbot-icon {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--dark-color) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            animation: pulse 2s infinite;
+        }
+        
+        .chatbot-icon:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        .chatbot-icon i {
+            font-size: 28px;
+            color: white;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(44, 94, 46, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 15px rgba(44, 94, 46, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(44, 94, 46, 0);
+            }
+        }
+        
+        /* Chatbot Window */
+        .chatbot-window {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            display: none;
+            flex-direction: column;
+            z-index: 1001;
+            overflow: hidden;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .chatbot-window.show {
+            display: flex;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .chatbot-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--dark-color) 100%);
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chatbot-header h5 {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+        
+        .chatbot-header i {
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+        
+        .chatbot-header i:hover {
+            transform: rotate(90deg);
+        }
+        
+        .chatbot-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .message.user {
+            justify-content: flex-end;
+        }
+        
+        .message.bot {
+            justify-content: flex-start;
+        }
+        
+        .message-content {
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 18px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .message.user .message-content {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--dark-color) 100%);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .message.bot .message-content {
+            background: white;
+            color: #333;
+            border: 1px solid #e0e0e0;
+            border-bottom-left-radius: 5px;
+        }
+        
+        .chatbot-input {
+            padding: 15px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chatbot-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 25px;
+            outline: none;
+            font-size: 0.9rem;
+        }
+        
+        .chatbot-input input:focus {
+            border-color: var(--primary-color);
+        }
+        
+        .chatbot-input button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .chatbot-input button:hover {
+            background: var(--dark-color);
+            transform: scale(1.05);
+        }
+        
+        .typing-indicator {
+            display: flex;
+            gap: 5px;
+            padding: 10px 15px;
+            background: white;
+            border-radius: 18px;
+            width: fit-content;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: #999;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+        
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.5;
+            }
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Footer Styles */
+        .footer {
+            background: linear-gradient(135deg, #0a2a1a 0%, #1e3a2f 100%);
+        }
+        
+        .footer a {
+            transition: all 0.3s ease;
+        }
+        
+        .footer a:hover {
+            color: var(--secondary-color) !important;
+        }
+        
+        /* Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            z-index: 99;
+            background: var(--primary-color);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .back-to-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .back-to-top:hover {
+            background: var(--secondary-color);
+            transform: translateY(-5px);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .carousel-item {
+                height: 400px;
+            }
+            
+            .carousel-caption h1 {
+                font-size: 1.8rem;
+            }
+            
+            .carousel-caption p {
+                font-size: 0.9rem;
+            }
+            
+            .navbar-brand {
+                font-size: 1.5rem;
+            }
+            
+            .chatbot-window {
+                width: 300px;
+                height: 450px;
+                right: 10px;
+                bottom: 80px;
+            }
+            
+            .chatbot-icon {
+                width: 50px;
+                height: 50px;
+                bottom: 20px;
+                right: 20px;
+            }
+            
+            .chatbot-icon i {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar Start -->
+    <div class="container-fluid px-0">
+        <nav class="navbar navbar-expand-lg navbar-dark py-3 px-lg-5 fixed-top">
+            <div class="container-fluid">
+                <a href="/" class="navbar-brand">
+                    <span class="text-primary">Am</span>
+                    <span class="text-secondary">ai</span>
+                    <span class="text-danger">zing</span>
+                    <small class="d-block text-white-50 fs-6">AI Yield Predictor</small>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-end" id="navbarCollapse">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a href="/" class="nav-link">
+                                <i class="fas fa-home me-1"></i>Home
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/about" class="nav-link">
+                                <i class="fas fa-info-circle me-1"></i>About
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/predict" class="nav-link">
+                                <i class="fas fa-chart-line me-1"></i>Predict
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/contact" class="nav-link">
+                                <i class="fas fa-envelope me-1"></i>Contact
+                            </a>
+                        </li>
+                    </ul>
+                    <a href="/predict" class="btn btn-predict text-white px-4 py-2 rounded-pill">
+                        <i class="fas fa-microchip me-2"></i>Start Prediction
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <!-- Navbar End -->
+
+    <!-- Simple Carousel Start -->
+    <div id="mainCarousel" class="carousel slide simple-carousel" data-bs-ride="carousel">
+        <!-- Indicators -->
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="0" class="active"></button>
+            <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="1"></button>
+            <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="2"></button>
+        </div>
+        
+        <!-- Carousel Items -->
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="../static/img/maize2.jpg" alt="Maize Farming">
+                <div class="carousel-overlay"></div>
+                <div class="carousel-caption">
+                    <h1>AI-Powered Maize Yield Prediction</h1>
+                    <p>Make data-driven decisions for better harvests</p>
+                    <a href="/predict" class="btn btn-predict text-white px-4 py-2 rounded-pill">
+                        Get Started
+                    </a>
+                </div>
+            </div>
+            
+            <div class="carousel-item">
+                <img src="../static/img/maize2.jpg" alt="Smart Farming">
+                <div class="carousel-overlay"></div>
+                <div class="carousel-caption">
+                    <h1>Maximize Your Crop Productivity</h1>
+                    <p>Get accurate predictions based on your farm parameters</p>
+                    <a href="/predict" class="btn btn-predict text-white px-4 py-2 rounded-pill">
+                        Predict Now
+                    </a>
+                </div>
+            </div>
+            
+            <div class="carousel-item">
+                <img src="../static/img/maize2.jpg" alt="Sustainable Agriculture">
+                <div class="carousel-overlay"></div>
+                <div class="carousel-caption">
+                    <h1>Sustainable Farming Solutions</h1>
+                    <p>Optimize resources and increase your yields</p>
+                    <a href="/about" class="btn btn-predict text-white px-4 py-2 rounded-pill">
+                        Learn More
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Controls -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+    <!-- Simple Carousel End -->
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer Start -->
+    <div class="container-fluid footer text-white py-5 mt-5">
+        <div class="container py-4">
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <h4 class="text-secondary mb-4">About Amaizing</h4>
+                    <p class="text-white-50">AI-powered platform helping farmers maximize maize yields through accurate predictions and data-driven insights.</p>
+                    <div class="mt-3">
+                        <a href="#" class="text-white-50 me-3"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white-50 me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white-50 me-3"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="text-white-50"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <h4 class="text-secondary mb-4">Quick Links</h4>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/" class="text-white-50"><i class="fas fa-chevron-right me-2"></i>Home</a></li>
+                        <li class="mb-2"><a href="/about" class="text-white-50"><i class="fas fa-chevron-right me-2"></i>About Us</a></li>
+                        <li class="mb-2"><a href="/predict" class="text-white-50"><i class="fas fa-chevron-right me-2"></i>Make Prediction</a></li>
+                        <li class="mb-2"><a href="/contact" class="text-white-50"><i class="fas fa-chevron-right me-2"></i>Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <h4 class="text-secondary mb-4">Contact Info</h4>
+                    <div class="mb-3">
+                        <i class="fas fa-map-marker-alt me-2"></i>
+                        <span class="text-white-50">Nairobi, Kenya</span>
+                    </div>
+                    <div class="mb-3">
+                        <i class="fas fa-envelope me-2"></i>
+                        <a href="mailto:info@amaizing.com" class="text-white-50">info@amaizing.com</a>
+                    </div>
+                    <div class="mb-3">
+                        <i class="fas fa-phone-alt me-2"></i>
+                        <a href="tel:+254700000000" class="text-white-50">+254 700 000 000</a>
+                    </div>
+                </div>
+            </div>
+            <hr class="border-secondary mt-4">
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <p class="mb-0 text-white-50">&copy; 2026 Amaizing. All Rights Reserved. Designed with <i class="fas fa-heart text-danger"></i> by <a class="text-secondary fw-bold" href="https://DKLEmpiretech.org" target="_blank">DKLEmpire Tech</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer End -->
+
+    <!-- Chatbot Icon -->
+    <div class="chatbot-icon" id="chatbotIcon">
+        <i class="fas fa-comment-dots"></i>
+    </div>
+
+    <!-- Chatbot Window -->
+    <div class="chatbot-window" id="chatbotWindow">
+        <div class="chatbot-header">
+            <h5><i class="fas fa-robot me-2"></i>Amaizing Assistant</h5>
+            <i class="fas fa-times" id="closeChatbot"></i>
+        </div>
+        <div class="chatbot-messages" id="chatMessages">
+            <div class="message bot">
+                <div class="message-content">
+                    Hello! 👋 I'm your Amaizing Assistant. I can help you with:<br>
+                    • Maize yield predictions<br>
+                    • Farming tips and advice<br>
+                    • Weather information<br>
+                    • Pest control recommendations<br><br>
+                    How can I help you today?
+                </div>
+            </div>
+        </div>
+        <div class="chatbot-input">
+            <input type="text" id="userInput" placeholder="Type your message here..." onkeypress="handleKeyPress(event)">
+            <button id="sendMessage">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Back to Top -->
+    <button class="back-to-top" id="backToTop">
+        <i class="bi bi-arrow-up"></i>
+    </button>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Chatbot functionality
+        const chatbotIcon = document.getElementById('chatbotIcon');
+        const chatbotWindow = document.getElementById('chatbotWindow');
+        const closeChatbot = document.getElementById('closeChatbot');
+        const sendButton = document.getElementById('sendMessage');
+        const userInput = document.getElementById('userInput');
+        const chatMessages = document.getElementById('chatMessages');
+        
+        // Open chatbot
+        chatbotIcon.addEventListener('click', () => {
+            chatbotWindow.classList.add('show');
+            chatbotIcon.style.display = 'none';
+        });
+        
+        // Close chatbot
+        closeChatbot.addEventListener('click', () => {
+            chatbotWindow.classList.remove('show');
+            chatbotIcon.style.display = 'flex';
+        });
+        
+        // Send message function
+        function sendMessage() {
+            const message = userInput.value.trim();
+            if (message === '') return;
+            
+            // Add user message
+            addMessage(message, 'user');
+            userInput.value = '';
+            
+            // Show typing indicator
+            showTypingIndicator();
+            
+            // Get bot response
+            setTimeout(() => {
+                removeTypingIndicator();
+                getBotResponse(message);
+            }, 1000);
+        }
+        
+        // Add message to chat
+        function addMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            messageDiv.innerHTML = `<div class="message-content">${text}</div>`;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // Show typing indicator
+        function showTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot';
+            typingDiv.id = 'typingIndicator';
+            typingDiv.innerHTML = `
+                <div class="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            `;
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // Remove typing indicator
+        function removeTypingIndicator() {
+            const indicator = document.getElementById('typingIndicator');
+            if (indicator) {
+                indicator.remove();
+            }
+        }
+        
+        // Get bot response - You'll add your API key here
+        async function getBotResponse(userMessage) {
+            // TODO: Add your API key here
+            const API_KEY = 'YOUR_API_KEY_HERE'; // Replace with your actual API key
+            const API_URL = 'https://api.openai.com/v1/chat/completions'; // Example for OpenAI
+            
+            // Simple response system (replace with actual API call)
+            const responses = {
+                'hello': 'Hello! How can I help you with your farming needs?',
+                'hi': 'Hi there! I\'m here to help you with maize farming.',
+                'yield': 'Maize yield depends on several factors like soil quality, rainfall, temperature, and farming practices. Use our prediction tool for accurate estimates!',
+                'soil': 'The ideal soil pH for maize is between 6.0 and 7.0. Consider testing your soil regularly.',
+                'pest': 'Common maize pests include stem borers, fall armyworms, and aphids. Use integrated pest management techniques.',
+                'fertilizer': 'Maize requires balanced NPK fertilizer. A ratio of 10:5:5 is commonly recommended.',
+                'water': 'Maize needs about 500-800mm of rainfall during its growing season.',
+                'thanks': 'You\'re welcome! Happy farming! 🌽',
+                'help': 'I can help you with maize farming tips, pest control, fertilizer recommendations, and more!'
+            };
+            
+            // Simple response logic (replace with API call)
+            let response = "I'm still learning! For specific questions about maize farming, please use our prediction tool or contact our support team.";
+            const lowerMessage = userMessage.toLowerCase();
+            
+            for (const [key, value] of Object.entries(responses)) {
+                if (lowerMessage.includes(key)) {
+                    response = value;
+                    break;
+                }
+            }
+            
+            // If you want to use API, uncomment this:
+            /*
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_KEY}`
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-3.5-turbo',
+                        messages: [
+                            {role: 'system', content: 'You are a helpful farming assistant specialized in maize agriculture.'},
+                            {role: 'user', content: userMessage}
+                        ]
+                    })
+                });
+                const data = await response.json();
+                response = data.choices[0].message.content;
+            } catch (error) {
+                console.error('Error:', error);
+                response = 'Sorry, I encountered an error. Please try again later.';
+            }
+            */
+            
+            addMessage(response, 'bot');
+        }
+        
+        // Handle enter key press
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+        
+        // Event listeners
+        sendButton.addEventListener('click', sendMessage);
+        
+        // Back to top button
+        const backToTopButton = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('show');
+            } else {
+                backToTopButton.classList.remove('show');
+            }
+        });
+        
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        
+        // Active navigation link
+        const currentPath = window.location.pathname;
+        document.querySelectorAll('.nav-link').forEach(link => {
+            if (link.getAttribute('href') === currentPath) {
+                link.classList.add('active');
+            }
+        });
+        
+        // Auto-play carousel
+        const carousel = new bootstrap.Carousel('#mainCarousel', {
+            interval: 4000,
+            wrap: true,
+            pause: 'hover'
+        });
+        
+        console.log('🚀 Amaizing - AI Maize Yield Predictor with Chatbot');
+    </script>
+</body>
+</html>
